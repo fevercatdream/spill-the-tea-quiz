@@ -1,0 +1,75 @@
+<!-- container for high scores -->
+
+<!-- container for the countdown timer -->
+
+<!-- start button -->
+
+<!-- container for the quiz -->
+    <!-- container for question -->
+    <!-- container for answers -->
+        <!-- container for each answer -->
+
+<!-- end screen -->
+    <!-- container for you won vs you scored 0 seconds -->
+    <!-- input for name/initials -->
+    <!-- save button -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/css/reset.css" />
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <title>Tea Quiz</title>
+</head>
+<body>
+    <header>
+        <h1>🍵 Spill the Tea 🍵</h1>
+    </header>
+    <main>
+        <section class="hidden active" id="start-screen">
+            <h2>Quiz Challenge</h2>
+            <p>
+                Try to answer the following questions within the time limit.<br />
+                Keep in mind that incorrect answers will penalize your score/time<br />
+                by ten seconds!
+            </p>
+            <button id="start-game">Start</button>
+        </section>
+        <section class="hidden" id="quiz-screen">
+            <section id="timebox">
+                <a><span id="high-scores">View High Scores</span></a>
+                <div id="answer-message"></div>
+                <div><span id="time-left"></span> seconds remaining</div>
+            </section>
+            <div class="hero" id="question-container">
+                <div class="question" id="question-title">🫖 Question ☕</div>
+                <div id="question-content">???</div>
+            </div>
+            <div id="answers-container">
+                <button class="answer-option" id="answer-option-a"></button>
+                <button class="answer-option" id="answer-option-b"></button>
+                <button class="answer-option" id="answer-option-c"></button>
+                <button class="answer-option" id="answer-option-d"></button>
+            </div>
+        </section>
+        <section class="hidden" id="end-screen">
+            <h2>All done!</h2>
+            <p>Your final score is <span></span>.</p>
+            <label for="initials-submit">Enter initials: </label><input type="text" id="initials-submit" />
+            <button id="submit-btn">Submit</button>
+        </section>
+        <section class="hidden" id="scores-screen">
+            <button id="prevPage">Go back</button>
+            <section id="scorebox">
+            <div id="scores">
+            </div>
+            <button id="reset-score">Reset Scores</button>
+            </section>
+        </section>
+    </main>
+    <script src="./assets/js/script.js"></script>
+</body>
+</html>
