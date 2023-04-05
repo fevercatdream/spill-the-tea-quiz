@@ -74,6 +74,8 @@
     // click save score
     // keyups
 
+
+// quiz questions
 var questions = [
     {
         question: "What plant does tea come from? 🌱",
@@ -103,7 +105,7 @@ var questions = [
         correctAnswer: "Taiwan",
     },
     {
-        question: "What tea is used in a Japanese tea ceremony \n(known as sadō/chadō (茶道, 'The Way of Tea')? 🍵",
+        question: "What tea is used in a Japanese tea ceremony? 🍵",
         possibleAnswers: [
             "Hojicha",
             "Genmaicha",
@@ -112,7 +114,7 @@ var questions = [
         correctAnswer: "Matcha",
     },
     {
-        question: "What type of tea is semi-oxidized? ☕",
+        question: "What type of tea is partially oxidized? ☕",
         possibleAnswers: [
             "Genmaicha",
             "Hojicha",
@@ -169,6 +171,7 @@ var questions = [
 
 var timerEl = document.querySelector("#time-left");
 var startScreen = document.querySelector("#start-screen");
+var startGameEl = document.querySelector("#start-game");
 var quizScreen = document.querySelector("#quiz-screen");
 var questionContent = document.querySelector("#question-content");
 var answerContent = document.querySelectorAll(".answer-option");
@@ -178,17 +181,29 @@ var answerOptionC = document.querySelector("#answer-option-c");
 var answerOptionD = document.querySelector("#answer-option-d");
 var answerMessage = document.querySelector("#answer-message");
 var endScreen = document.querySelector("#end-screen");
+var submitBtn = document.querySelector("#submit-btn");
+var finalScoreEl = document.querySelector("#final-score");
 var scoresScreen = document.querySelector("#scores-screen");
 var scoresFormEl = document.querySelector("#scores-form");
-var scoresListEls = document.querySelectorAll(".scores-list");
+var scoresListEl = document.querySelector("#scores-list");
 var initialsInput = document.querySelector("#initials-input");
-var highScoresEl = document.querySelectorAll(".high-scores");
+var highScoresEl = document.querySelector("#high-scores");
+var backBtn = document.querySelector("#back-btn");
+var resetScoreEl = document.querySelector("#reset-score");
 var isPlaying = false;
 var currentQuestionIndex = 0;
 var timeRemaining;
 var finalTime;
 var quizTime;
-var scoresArr = [];
+var scoresArr; 
+
+// localStorage
+var savedScores = localStorage.getItem("saved-scores");
+if(savedScores === null){
+    scoresArr = [];
+}else{
+    scoresArr = JSON.parse(savedScores);
+}
 
 
 // countdown timer
@@ -200,28 +215,37 @@ function quizTimer(playTime){
         timerEl.textContent = timeRemaining;
 
         if (timeRemaining <= 0){
-            // if time runs out, stop time and go to end screen
-            clearInterval(quizTime);
-            isPlaying = false;
+            // if time runs out, go to end screen
             goEndScreen();
         }
 
     }, 1000);
 }
 
+// shows start screen and hides other screens
+function startQuiz(){
+    startScreen.classList.remove("hidden");
+    quizScreen.classList.add("hidden");
+    scoresScreen.classList.add("hidden");
+    endScreen.classList.add("hidden");
+}
+
 // start quiz when button is clicked
 function playQuiz(){
-
-    isPlaying = true;
 
     startScreen.classList.add("hidden");
     quizScreen.classList.remove("hidden");
     scoresScreen.classList.add("hidden");
     endScreen.classList.add("hidden");
     
-    quizTimer(30);
+    // initial time set for quiz
+    quizTimer(60);
+    timerEl.textContent = timeRemaining;
+    answerMessage.textContent = ""
+    currentQuestionIndex = 0;
     nextQuestion();
 }
+
 
 function nextQuestion(){
     var newAnswerArr = [];
@@ -256,9 +280,16 @@ function shuffleAnswerArray(newAnswerArr) {
     }
 }
 
+// to submit initials and score for the scores screen
 function handleFormSubmit(event){
     // prevent the default behavior
     event.preventDefault();
+
+    // if no value input will exit function without submitting
+    // aka submit button will not work until value added
+    if(initialsInput.value === ""){
+        return;
+    }
 
     var scoreObj = {
         initials: initialsInput.value,
@@ -273,27 +304,39 @@ function handleFormSubmit(event){
             return 0;
         }
         if(a.score > b.score){
-            return 1;
+            return -1;
         }
         if(a.score < b.score){
-            return -1;
+            return 1;
         }
     });
 
-    renderScoresToList(scoresArr);
+    // localStorage
+    localStorage.setItem("saved-scores", JSON.stringify(scoresArr));
+
+    goScoreScreen();
 }
 
-// takes in an array and returns a list
+// takes in an array and and prints to screen
 function renderScoresToList(scores){
-    
-    for (var j = 0; j < scoresListEls.length; j++) {
-        for (var i = 0; i < scores.length; i++) {
-            var listItem = document.createElement("li");
-            listItem.textContent = scores[i].initials;
-            scoresListEls[j].append(listItem);
-        }
-    }
+    scoresListEl.innerHTML = "";
 
+    for (var i = 0; i < scores.length; i++) {
+        var listItem = document.createElement("li");
+        listItem.textContent = scores[i].initials + " " + scores[i].score;
+        scoresListEl.append(listItem);
+    }
+    
+}
+
+// goes to score screen
+function goScoreScreen(){
+    startScreen.classList.add("hidden");
+    quizScreen.classList.add("hidden");
+    scoresScreen.classList.remove("hidden");
+    endScreen.classList.add("hidden");
+
+    renderScoresToList(scoresArr);
 }
 
 // shows end screen
@@ -303,14 +346,20 @@ function goEndScreen(){
     scoresScreen.classList.add("hidden");
     endScreen.classList.remove("hidden");
 
-    finalTime = timeRemaining;
+    clearInterval(quizTime);
+
+    if(timeRemaining < 0){
+        finalTime = 0;
+    }else{
+        finalTime = timeRemaining;
+    }
+
+    finalScoreEl.textContent = finalTime;
 }
 
 // starts game if start button is clicked
-document.querySelector("#start-game").addEventListener("click", function(){
-    if(!isPlaying){
-        playQuiz();
-    }
+startGameEl.addEventListener("click", function(){
+    playQuiz();
 })
 
 // if answer option a = correct answer display message "Correct!"
@@ -319,8 +368,10 @@ document.querySelector("#start-game").addEventListener("click", function(){
 answerOptionA.addEventListener("click", function(){
     if(answerOptionA.textContent === questions[currentQuestionIndex].correctAnswer){
         answerMessage.textContent = "Correct!";
+        timeRemaining = timeRemaining + 10;
     }else{
         answerMessage.textContent = "Wrong!";
+        timeRemaining = timeRemaining - 10;
     }
     currentQuestionIndex++;
 
@@ -328,7 +379,7 @@ answerOptionA.addEventListener("click", function(){
     if(currentQuestionIndex === questions.length){
         goEndScreen();
     }else{
-        playQuiz(questions[currentQuestionIndex]);
+        nextQuestion(questions[currentQuestionIndex]);
     }
 });
 
@@ -338,16 +389,19 @@ answerOptionA.addEventListener("click", function(){
 answerOptionB.addEventListener("click", function(){
     if(answerOptionB.textContent === questions[currentQuestionIndex].correctAnswer){
         answerMessage.textContent = "Correct!";
+        timeRemaining = timeRemaining + 10;
     }else{
         answerMessage.textContent = "Wrong!";
+        timeRemaining = timeRemaining - 10;
     }
     currentQuestionIndex++;
 
     // if answer all questions go to end screen
     if(currentQuestionIndex === questions.length){
        goEndScreen(); 
+    }else{
+    nextQuestion(questions[currentQuestionIndex]);
     }
-    playQuiz(questions[currentQuestionIndex]);
 });
 
 // if answer option c = correct answer display message "Correct!"
@@ -356,16 +410,19 @@ answerOptionB.addEventListener("click", function(){
 answerOptionC.addEventListener("click", function(){
     if(answerOptionC.textContent === questions[currentQuestionIndex].correctAnswer){
         answerMessage.textContent = "Correct!";
+        timeRemaining = timeRemaining + 10;
     }else{
         answerMessage.textContent = "Wrong!";
+        timeRemaining = timeRemaining - 10;
     }
     currentQuestionIndex++;
 
     // if answer all questions go to end screen
     if(currentQuestionIndex === questions.length){
         goEndScreen();
+    }else{
+    nextQuestion(questions[currentQuestionIndex]);
     }
-    playQuiz(questions[currentQuestionIndex]);
 });
 
 // if answer option d = correct answer display message "Correct!"
@@ -374,24 +431,33 @@ answerOptionC.addEventListener("click", function(){
 answerOptionD.addEventListener("click", function(){
     if(answerOptionD.textContent === questions[currentQuestionIndex].correctAnswer){
         answerMessage.textContent = "Correct!";
+        timeRemaining = timeRemaining + 10;
     }else{
         answerMessage.textContent = "Wrong!";
+        timeRemaining = timeRemaining - 10;
     }
     currentQuestionIndex++;
 
     // if answer all questions go to end screen
     if(currentQuestionIndex === questions.length){
         goEndScreen();
+    }else{
+    nextQuestion(questions[currentQuestionIndex]);
     }
-    playQuiz(questions[currentQuestionIndex]);
 });
 
+// submit button when clicked adds initials and scores to score screen
+submitBtn.addEventListener("click", handleFormSubmit);
 
-document.querySelector("#submit-btn").addEventListener("click", handleFormSubmit);
+// goes to scores screen when button clicked
+highScoresEl.addEventListener("click", goScoreScreen);  
 
+// goes to start screen when button clicked
+backBtn.addEventListener("click", startQuiz);
 
-// if clear scores clicked, reset wins/losses in localStorage
-document.querySelector("#reset-score").addEventListener("click", function(){
-    localStorage.setItem("high-scores", 0);
-    highScoresEl.textContent = 0;
-})
+// if reset scores clicked, resets scores in localStorage
+resetScoreEl.addEventListener("click", function(){
+    localStorage.removeItem("saved-scores");
+    scoresArr = [];
+    renderScoresToList(scoresArr);
+});

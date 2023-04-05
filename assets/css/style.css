@@ -49,7 +49,7 @@ h1 {
     justify-content: center;
     flex: 1 1 920px;
     flex-grow: 1;
-    height: 200px;
+    gap: 12px;
     max-width: 920px;
     border: 2px solid var(--color-dark-purple);
     box-shadow: var(--box-shadow-color);
@@ -79,7 +79,6 @@ h1 {
     flex-direction: column;
     flex: 1 1 920px;
     flex-grow: 1;
-    height: 200px;
     max-width: 920px;
     border: 2px solid var(--color-dark-purple);
     box-shadow: var(--box-shadow-color);
@@ -110,7 +109,7 @@ h1 {
     flex-wrap: wrap;
     flex-direction: row;
     flex-grow: 1;
-    gap: 20px;
+    gap: 12px;
     padding: 25px;
 }
 
@@ -121,7 +120,6 @@ h1 {
     align-items: center;
     justify-content: flex-start;
     position: relative;
-    height: 100px;
     border: 2px solid var(--color-dark-purple);
     box-shadow: var(--box-shadow-color);
     color: var(--color-dark-spring-green);
@@ -161,7 +159,7 @@ h1 {
     justify-content: space-around;
     flex: 1 1 920px;
     flex-grow: 1;
-    height: 200px;
+    gap: 12px;
     max-width: 920px;
     border: 2px solid var(--color-dark-purple);
     box-shadow: var(--box-shadow-color);
@@ -176,10 +174,12 @@ h1 {
 #scores-screen {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     flex: 1 1 920px;
     flex-grow: 1;
+    gap: 12px;
     max-width: 920px;
     border: 2px solid var(--color-dark-purple);
     box-shadow: var(--box-shadow-color);
@@ -191,25 +191,32 @@ h1 {
     text-decoration: none;
 }
 
-/* #scorebox {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 1.5em;
-    color: var(--color-dark-spring-green);
-    text-shadow: var(--text-shadow-color-black-tea-green);
-    padding: 25px;
-    margin: 10px 25px;
-} */
-
-#reset-score,
-#prevPage,
-#submit-btn {
+#high-scores,
+#back-btn,
+#submit-btn,
+#reset-score {
     letter-spacing: 1px;
     background: var(--background-color-linear-gradient-gold);
     color: var(--color-blueviolet);
     text-shadow: var(--text-shadow-color-black-tea-green);
     padding: 5px 20px;
     border-radius: 5px;
+}
+
+#scores-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+#scores {
+    flex: 1 1 100%;
+}
+
+#scores h2 {
+    font-size: 2em;
+}
+
+#scores ol {
+    font-size: 1.5em;
 }
