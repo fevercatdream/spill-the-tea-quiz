@@ -39,7 +39,7 @@ h1 {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 #start-screen {
@@ -191,7 +191,7 @@ h1 {
     text-decoration: none;
 }
 
-#scorebox {
+/* #scorebox {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -201,7 +201,7 @@ h1 {
     text-shadow: var(--text-shadow-color-black-tea-green);
     padding: 25px;
     margin: 10px 25px;
-}
+} */
 
 #reset-score,
 #prevPage,

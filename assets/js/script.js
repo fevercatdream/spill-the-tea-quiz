@@ -179,16 +179,21 @@ var answerOptionD = document.querySelector("#answer-option-d");
 var answerMessage = document.querySelector("#answer-message");
 var endScreen = document.querySelector("#end-screen");
 var scoresScreen = document.querySelector("#scores-screen");
-// var highScoresEl = document.querySelector("#high-scores");
+var scoresFormEl = document.querySelector("#scores-form");
+var scoresListEls = document.querySelectorAll(".scores-list");
+var initialsInput = document.querySelector("#initials-input");
+var highScoresEl = document.querySelectorAll(".high-scores");
 var isPlaying = false;
 var currentQuestionIndex = 0;
+var timeRemaining;
+var finalTime;
 var quizTime;
-// var gameScore;
+var scoresArr = [];
 
 
 // countdown timer
 function quizTimer(playTime){
-    var timeRemaining = playTime;
+    timeRemaining = playTime;
 
     quizTime = setInterval(function(){
         timeRemaining--;
@@ -215,16 +220,20 @@ function playQuiz(){
     endScreen.classList.add("hidden");
     
     quizTimer(30);
-    var newAnswerArr = [];
+    nextQuestion();
+}
 
+function nextQuestion(){
+    var newAnswerArr = [];
+    
     // push possible answers to new array newAnswerArray to randomly shuffle correct answer placement
     for (var i = 0; i < questions[currentQuestionIndex].possibleAnswers.length; i++) {
         newAnswerArr.push(questions[currentQuestionIndex].possibleAnswers[i]);
     }
     newAnswerArr.push(questions[currentQuestionIndex].correctAnswer);
-
+    
     shuffleAnswerArray(newAnswerArr);
-
+    
     // will place the shuffled array elements in the four button options
     questionContent.textContent = questions[currentQuestionIndex].question;
     answerOptionA.textContent = newAnswerArr[0];
@@ -247,12 +256,54 @@ function shuffleAnswerArray(newAnswerArr) {
     }
 }
 
+function handleFormSubmit(event){
+    // prevent the default behavior
+    event.preventDefault();
+
+    var scoreObj = {
+        initials: initialsInput.value,
+        score: finalTime,
+    };
+  
+    scoresArr.push(scoreObj);  
+
+    // compares two scores to sort by higher score
+    scoresArr.sort(function(a, b){
+        if(a.score === b.score){
+            return 0;
+        }
+        if(a.score > b.score){
+            return 1;
+        }
+        if(a.score < b.score){
+            return -1;
+        }
+    });
+
+    renderScoresToList(scoresArr);
+}
+
+// takes in an array and returns a list
+function renderScoresToList(scores){
+    
+    for (var j = 0; j < scoresListEls.length; j++) {
+        for (var i = 0; i < scores.length; i++) {
+            var listItem = document.createElement("li");
+            listItem.textContent = scores[i].initials;
+            scoresListEls[j].append(listItem);
+        }
+    }
+
+}
+
 // shows end screen
 function goEndScreen(){
     startScreen.classList.add("hidden");
     quizScreen.classList.add("hidden");
     scoresScreen.classList.add("hidden");
     endScreen.classList.remove("hidden");
+
+    finalTime = timeRemaining;
 }
 
 // starts game if start button is clicked
@@ -334,6 +385,9 @@ answerOptionD.addEventListener("click", function(){
     }
     playQuiz(questions[currentQuestionIndex]);
 });
+
+
+document.querySelector("#submit-btn").addEventListener("click", handleFormSubmit);
 
 
 // if clear scores clicked, reset wins/losses in localStorage

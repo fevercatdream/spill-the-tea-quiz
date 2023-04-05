@@ -29,7 +29,8 @@
         <h1>🍵 Spill the Tea 🍵</h1>
     </header>
     <main>
-        <section class="hidden active" id="start-screen">
+        <section class="active" id="start-screen">
+            <a><span class="high-scores">View High Scores</span></a>
             <h2>Quiz Challenge</h2>
             <p>
                 Try to answer the following questions within the time limit.<br />
@@ -40,7 +41,7 @@
         </section>
         <section class="hidden" id="quiz-screen">
             <section id="timebox">
-                <a><span id="high-scores">View High Scores</span></a>
+                <a><span class="high-scores">View High Scores</span></a>
                 <div id="answer-message"></div>
                 <div><span id="time-left"></span> seconds remaining</div>
             </section>
@@ -58,16 +59,18 @@
         <section class="hidden" id="end-screen">
             <h2>All done!</h2>
             <p>Your final score is <span></span>.</p>
-            <label for="initials-submit">Enter initials: </label><input type="text" id="initials-submit" />
-            <button id="submit-btn">Submit</button>
+            <form id="scores-form">
+                <label for="initials-submit">Enter initials: </label><input type="text" id="initials-input" />
+                <button id="submit-btn">Submit</button>
+            </form>
+            <ul class="scores-list"></ul>
         </section>
         <section class="hidden" id="scores-screen">
             <button id="prevPage">Go back</button>
-            <section id="scorebox">
-            <div id="scores">
-            </div>
             <button id="reset-score">Reset Scores</button>
-            </section>
+            <div id="scores">
+                <ul class="scores-list"></ul>
+            </div>
         </section>
     </main>
     <script src="./assets/js/script.js"></script>
